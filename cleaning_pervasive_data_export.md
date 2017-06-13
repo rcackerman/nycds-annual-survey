@@ -1,3 +1,8 @@
+To copy csv into postgres
+```
+\copy <whatever table> from '<whatever file>' delimiter ',' quote '"' null '' csv header;
+```
+
 Things to check for
 
 ```
