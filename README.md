@@ -8,6 +8,7 @@ Steps for population:
 3. Remove clients with disposition of being transferred to another provider.
 4. Remove clients who speak a language other than English (blank) or Spanish.
 5. Remove clients with an address of 'homeless' or an address that is a shelter, hospital, or rehab facility.
+6. Remove clients without an address at all (since we can't mail them anything).
 6. Remove clients who were ever 730'd.
 7. Remove clients currently under 18.
 
