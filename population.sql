@@ -7,7 +7,11 @@ WITH closed_cases AS (
     cas_clientid,
     cas_aliasid,
     cas_case_type,
-    cas_case_detail
+    cas_case_detail,
+    cas_tc_number,
+    cas_tc_short,
+    cas_fc_number,
+    cas_fc_short
   FROM cases
   WHERE cas_case_status = 'C'
 ),
@@ -44,9 +48,24 @@ cases_not_transferred AS (
   )
 ),
 
+-- TODO: Remove clients who were ever 730'd
+
+-- Get sentence info so we can tell who will be in or out
+cases_with_sentencing AS (
+  SELECT
+    cases_not_transferred.*,
+    snt_date,
+    snt_type,
+    snt_length,
+    snt_condition
+  FROM cases_not_transferred
+  LEFT JOIN sentences
+    ON cas_file_number = snt_file_number
+),
+
 -- Remove clients who speak a language other than English (blank) or Spanish
 client_info as (
-  select
+  SELECT
     nam_nameid,
     nam_alias_link,
     nam_nysid,
@@ -60,21 +79,24 @@ client_info as (
     nam_ethnicity,
     nam_citizenship
   FROM names
-  JOIN cases_not_transferred
+  JOIN cases_with_sentencing
     ON cas_clientid = nam_nameid
     OR cas_aliasid = nam_nameid
     OR cas_clientid = nam_alias_link
     OR cas_aliasid = nam_alias_link
   WHERE interpreter in ('English', 'Spanish')
+    OR interpreter = '' -- means English
+    OR interpreter is null -- means English
 )
 
 -- get address information
+-- remove clients without an address
 SELECT
   *
 FROM client_info
 JOIN addresses
-ON adr_nameid = nam_nameid
-OR adr_nameid = nam_alias_link
-
--- TODO: get in or out status
+  ON adr_nameid = nam_nameid
+  OR adr_nameid = nam_alias_link
+WHERE adr_street1 != '' -- we need there to be address information in at least one street fields
+  OR adr_street2 != ''
 ;  
