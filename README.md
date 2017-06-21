@@ -5,7 +5,23 @@ This is the codebase for the annual survey.
 Steps for population:
 1. Get all clients who are on a closed case, which was disposed of in the last 3 years.
 2. Remove clients with current case.
-3. Remove clients with disposition of being transferred to another provider.
+3. Remove clients with disposition of being transferred to another provider. Disposition codes are:
+  * 'ADBR' - adjourned to Brooklyn
+  * 'ADBX' - adjourned to Bronx
+  * 'ADQU' - adjourned to Queens
+  * 'ADRI' - adjourned to Richmond (Staten Island)
+  * 'ADSA' - adjourned to SAP part
+  * 'AFC' - adjourned to family court
+  * 'C/I' - conflict of interest necessitated transfer
+  * 'EXH'- extradited after hearing
+  * 'INEL' - ineligible
+  * 'PROS' - relieved due to pro se
+  * 'R18B' - relieved by 18b attorney
+  * 'RELC' - relieved by court action
+  * 'RHOM' - relieved by homicide
+  * 'RLAS' - relieved by Legal Aid
+  * 'RNDS' - relieved by NDS
+  * 'RPC' - client retained private counsel
 4. Remove clients who speak a language other than English (blank) or Spanish.
 5. Remove clients with an address of 'homeless' or an address that is a shelter, hospital, or rehab facility.
 6. Remove clients without an address at all (since we can't mail them anything).
@@ -21,4 +37,4 @@ Steps for sample:
 4. Create dummy variable for incarcerated at Rikers.
 5. Create dummy variable for incarcerated upstate.
 6. Create dummy variable for felony.
-7. Create dummy variable for whether they were in jail during pendency of their case.
+7. ~~Create dummy variable for whether they were in jail during pendency of their case.~~
