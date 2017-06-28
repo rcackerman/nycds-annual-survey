@@ -1,4 +1,4 @@
--- collapse_clients.sql
+﻿-- collapse_clients.sql
 -- PDCMS links people to deal with duplicates
 -- this query collapses those links into discrete groups
 
@@ -10,12 +10,12 @@
 WITH potential_clients AS (
   SELECT
     names.*,
-    RANK() OVER (PARTITION BY nam_alias_link ORDER BY cas_open_date::DATE desc)
+    RANK() OVER (PARTITION BY nam_alias_link ORDER BY cas_open_date::DATE, cas_file_number desc)
   FROM names
   JOIN survey_cases
-  ON cas_alias_id = nam_alias_link
-  )
-),
+  ON cas_aliasid = nam_alias_link
+)
+,
 
 nysids_per_person AS (
   -- Collapse NYSIDs into an array so we can check on them in OCA.
@@ -26,27 +26,27 @@ nysids_per_person AS (
     array_agg(DISTINCT nam_nysid) AS nysids
   FROM potential_clients
   GROUP BY nam_alias_link
-
-)
+),
 
 collapse_clients AS (
-  -- For a first pass, get the most recent first AND last name
-  -- as well as the first present language, race, gender, ethnicity, and citizenship.
-  -- In the next CLE we will collapse NYSIDs, but for now we will keep them as-is.
-  SELECT
+  -- -- For a first pass, get the most recent first AND last name
+  -- -- as well as the first present language, race, gender, ethnicity, and citizenship.
+  -- -- In the next CLE we will collapse NYSIDs, but for now we will keep them as-is.
+  SELECT DISTINCT
     nam_nameid,
-    nam_alias_link AS person_id,
-    FIRST_VALUE(nam_first_name) OVER (PARTITION BY nam_alias_link ORDER BY rank) AS first_name,
-    FIRST_VALUE(nam_last_name) OVER (PARTITION BY nam_alias_link ORDER BY rank) AS last_name,
-    FIRST_VALUE(nam_interpreter) OVER (PARTITION BY nam_alias_link ORDER BY nam_interpreter desc) AS language,
-    FIRST_VALUE(nam_race) OVER (PARTITION BY nam_alias_link ORDER  BY nam_race desc) AS race,
-    FIRST_VALUE(nam_gender) OVER (PARTITION BY nam_alias_link ORDER  BY nam_gender desc) AS gender
-    FIRST_VALUE(nam_ethnicity) OVER (PARTITION BY nam_alias_link ORDER  BY nam_ethnicity desc) AS ethnicity,
-    FIRST_VALUE(nam_citizenship) OVER (PARTITION BY nam_alias_link ORDER  BY nam_citizenship desc) AS citizenship,
+    potential_clients.nam_alias_link AS person_id,
+    FIRST_VALUE(nam_first_name) OVER (PARTITION BY potential_clients.nam_alias_link ORDER BY rank) AS first_name,
+    FIRST_VALUE(nam_last_name) OVER (PARTITION BY potential_clients.nam_alias_link ORDER BY rank) AS last_name,
+    FIRST_VALUE(nam_interpreter) OVER (PARTITION BY potential_clients.nam_alias_link ORDER BY nam_interpreter desc) AS language,
+    FIRST_VALUE(nam_race) OVER (PARTITION BY potential_clients.nam_alias_link ORDER  BY nam_race desc) AS race,
+    FIRST_VALUE(nam_gender) OVER (PARTITION BY potential_clients.nam_alias_link ORDER  BY nam_gender desc) AS gender,
+    FIRST_VALUE(nam_ethnicity) OVER (PARTITION BY potential_clients.nam_alias_link ORDER  BY nam_ethnicity desc) AS ethnicity,
+    FIRST_VALUE(nam_citizenship) OVER (PARTITION BY potential_clients.nam_alias_link ORDER  BY nam_citizenship desc) AS citizenship,
     nysids
   FROM potential_clients
   JOIN nysids_per_person
     ON potential_clients.nam_alias_link = nysids_per_person.nam_alias_link
+  order by person_id
 ),
 
 -- Remove clients who speak a language other than English (blank) or Spanish
@@ -54,9 +54,10 @@ clients_english_spanish as (
   SELECT
     *
   FROM collapse_clients
-  WHERE (interpreter in ('English', 'Spanish')
-    OR interpreter = '' -- means English
-    OR interpreter is null -- means English)
+  WHERE (language in ('ENGLISH', 'SPANISH')
+    OR language = '' -- means English
+    OR language is null -- means English
+    )
 ),
 
 -- get address information
@@ -75,7 +76,6 @@ clients_addresses AS (
   FROM clients_english_spanish
   JOIN addresses
     ON adr_nameid = nam_nameid
-    OR adr_nameid = person_id 
 ),
 
 -- Remove people whose address most recent is blank
@@ -87,12 +87,14 @@ clients_no_blank_addresses AS (
     -- if the person_id's most recent address is blank, take out the person
     -- we need there to be address information in at least one street fields
     SELECT 1
-    FROM (SELECT * FROM clients_addresses WHERE RANK = 1) firsts
+    FROM (SELECT * FROM clients_addresses WHERE addr_nb = 1) firsts
     WHERE clients_addresses.person_id = firsts.person_id
-      AND (adr_street1 != '' 
-          OR adr_street2 != '')
+      AND (adr_street1 = '' 
+          OR adr_street2 = '')
   )
 )
 
+select * from clients_no_blank_addresses
 
--- TODO: remove homeless? any address that doesn't start WITH a number?
+
+-- -- TODO: remove homeless? any address that doesn't start WITH a number?
