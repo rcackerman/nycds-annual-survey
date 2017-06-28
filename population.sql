@@ -1,12 +1,16 @@
--- population.sql
+﻿-- population.sql
 
+DROP TABLE IF EXISTS survey_cases;
+
+CREATE TABLE survey_cases AS
 
 WITH closed_cases AS (
   SELECT
     cas_file_number,
     cas_clientid,
     cas_aliasid,
-    cas_open_date,
+    cas_open_date::DATE AS cas_open_date,
+    cas_closed_date::DATE AS cas_closed_date,
     cas_case_type,
     cas_case_detail,
     cas_tc_number,
@@ -15,6 +19,7 @@ WITH closed_cases AS (
     cas_fc_short
   FROM cases
   WHERE cas_case_status = 'C'
+  AND cas_closed_date::DATE > current_date - '3 years'::INTERVAL
 ),
 
 -- Remove clients with current case.
@@ -80,7 +85,6 @@ clients_ever_730d AS (
   )
 )
 
-CREATE TABLE survey_cases AS
   SELECT *
   FROM clients_ever_730d
 ;  
