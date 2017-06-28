@@ -61,6 +61,8 @@ clients_english_spanish as (
 ),
 
 -- get address information
+-- TODO: add CASE open date because if the address doesn't exist it won't have an address itself
+-- TODO: COALESCE CASE open date AND address date so we have an approximate date for the blank address
 clients_addresses AS (
   SELECT
     clients_english_spanish.*,
