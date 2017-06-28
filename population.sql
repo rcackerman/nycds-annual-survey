@@ -61,6 +61,9 @@ cases_with_sentencing AS (
   FROM cases_not_transferred
   LEFT JOIN sentences
     ON cas_file_number = snt_file_number
+    AND (snt_date != ''
+      OR snt_length != ''
+      OR snt_condition != '')
 ),
 
 -- Remove clients who were ever 730'd
