@@ -2,7 +2,10 @@
 
 This is the codebase for the annual survey.
 
-Steps for population:
+### Population construction
+The population dataset is created in 3 stages.
+
+`population.sql` generates a dataset of clients on cases that qualify:
 1. Get all clients who are on a closed case, which was disposed of in the last 3 years.
 2. Remove clients with current case.
 3. Remove clients with disposition of being transferred to another provider. Disposition codes are:
@@ -22,19 +25,54 @@ Steps for population:
   * 'RLAS' - relieved by Legal Aid
   * 'RNDS' - relieved by NDS
   * 'RPC' - client retained private counsel
-4. Remove clients who speak a language other than English (blank) or Spanish.
-5. Remove clients whose last address is 'homeless' or an address that is a shelter, hospital, or rehab facility.
-6. Remove clients whose last address is not an address at all (since we can't mail them anything).
-6. Remove clients who were ever 730'd.
+4. Remove clients who were ever 730'd.
+
+`collapse_clients.sql` uses `population.sql` and further refines it. Specifically, in `collapse_clients.sql`, we:
+5. Remove clients who speak a language other than English (blank) or Spanish.
+6. Remove clients whose last address is blank (since we can't mail them anything).
 7. Remove clients currently under 18.
+
+Finally, we use python to remove clients who are homeless or have unstable housing. In `population.py` we:
+8. Remove clients whose last address is 'homeless' or an address that is a shelter, hospital, or rehab facility.
+
+In `population.py`, we also create dummy variables for the following:
+1. Disposition at arraignments (1 court appearance total).
+2. Having gone to trial.
+3. Female clients.
+4. Cases ended with incarceration at Rikers.
+5. Cases ended with incarceration upstate.
+6. Felony indictments.
+
+#### Population dataset
+
+Once completed, the final population dataset will contain data needed to select a stratified random sample as well as information needed to tell the recipient which case experience to answer questions about.
+
+The final columns will be:
+* `cas_docket` - the docket number for the case
+* `cas_indictment` or other felony case #
+* `cas_open_date` - the date the case opened
+* `cas_closed_date` - the date the case was closed
+* `cas_tc_number` - top charge
+* `cas_tc_short` - top charge
+* `cas_fc_number` - final charge
+* `cas_fc_short` - final charge
+* `person_id` - corresponding to `cas_aliasid`, this is the ID for the group of duplicate people on different cases
+* `snt_type` - the type of sentence
+* `snt_length` - the length of the sentence
+* `snt_condition` - any conditions of the sentence
+* `snt_date` - the date the sentence was imposed (will be used to figure out if someone is still in jail/prison)
+* `first_name` - the most recent first name across all aliases 
+* `last_name` - the most recent last name across all aliases
+* `language` - the first language code found across all aliases
+* `race` - the first race code found across all aliases
+* `ethnicity` - the first ethnicity code found across all aliases
+* `citizenship` - the first citizenship code found across all aliases
+* `nysids` - a list of all NYSIDs associated with the person's aliases
+* address information - TBD
+
+### Potential to-dos/etc
 
 Potentially remove clients who are in mental health court and clients who had more than one assigned attorney.
 
 Steps for sample:
-1. Create dummy variable for disposition at arraignments (1 court appearance total).
-2. Create dummy variable for having gone to trial.
-3. Create dummy variable for female.
-4. Create dummy variable for incarcerated at Rikers.
-5. Create dummy variable for incarcerated upstate.
-6. Create dummy variable for felony.
 7. ~~Create dummy variable for whether they were in jail during pendency of their case.~~
