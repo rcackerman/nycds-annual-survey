@@ -5,6 +5,8 @@ This is the codebase for the annual survey.
 ### Population construction
 The population dataset is created in 3 stages.
 
+#### population.sql
+
 `population.sql` generates a dataset of clients on cases that qualify:
 1. Get all clients who are on a closed case, which was disposed of in the last 3 years.
 2. Remove clients with current case.
@@ -27,13 +29,22 @@ The population dataset is created in 3 stages.
   * 'RPC' - client retained private counsel
 4. Remove clients who were ever 730'd.
 
+In this file we do not collapse people; that is, if someone is on multiple cases, or has multiple dispositions of a case, they will appear in this dataset multiple times.
+
+#### collapse_clients.sql
+
+In this file, we collapse the various instances of one person into one single record, so that we can randomly sample clients who have had cases with us. Most of our clients do not have multiple aliases, but for those that do, we have to aggregate the information we know about them. For these clients we take any language they speak, and any race, ethnicity, gender, or citizenship we have recorded for any of their aliases and interpolate that to all of their aliases. We then pick the most recent name across any aliases the client might have. Finally, for any client with multiple ages, we take the most recent birth date.
+
+We look at all addresses for all clients - with or without aliases.
+
+
 `collapse_clients.sql` uses `population.sql` and further refines it. Specifically, in `collapse_clients.sql`, we:
 5. Remove clients who speak a language other than English (blank) or Spanish.
-6. Remove clients whose last address is blank (since we can't mail them anything).
-7. Remove clients currently under 18.
+6. Remove clients currently under 18.
+
 
 Finally, we use python to remove clients who are homeless or have unstable housing. In `population.py` we:
-8. Remove clients whose last address is 'homeless' or an address that is a shelter, hospital, or rehab facility.
+7. Remove clients whose last address is 'homeless' or an address that is a shelter, hospital, or rehab facility.
 
 In `population.py`, we also create dummy variables for the following:
 1. Disposition at arraignments (1 court appearance total).
@@ -74,5 +85,9 @@ The final columns will be:
 
 Potentially remove clients who are in mental health court and clients who had more than one assigned attorney.
 
+Due to how messy the address data are, we will need to do more processing (maybe manually) to figure out who to mail things to.
+
+
 Steps for sample:
 7. ~~Create dummy variable for whether they were in jail during pendency of their case.~~
+6. ~~Remove clients whose last address is blank (since we can't mail them anything).~~

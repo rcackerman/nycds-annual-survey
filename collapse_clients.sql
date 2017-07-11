@@ -5,7 +5,7 @@
 -- For right now, work with clients only
 -- Look up clients by alias, because the alias ID is the "master" ID
 -- so provides a link across versions of the same person.
--- Also flag the most recently entered version of the person
+-- Also flag the most recently used version of the person
 -- because names don't have an entered-on date
 WITH potential_clients AS (
   SELECT
@@ -14,13 +14,12 @@ WITH potential_clients AS (
   FROM names
   JOIN survey_cases
   ON cas_aliasid = nam_alias_link
-)
-,
+),
 
+-- Collapse NYSIDs into an array so we can check on them in OCA.
+-- Any given PDCMS name connected to an alias can have a different NYSID,
+-- so we'll capture all of them for now.
 nysids_per_person AS (
-  -- Collapse NYSIDs into an array so we can check on them in OCA.
-  -- Any given person connected to an alias can have a different NYSID,
-  -- so we'll capture all of them for now.
   SELECT
     nam_alias_link,
     array_agg(DISTINCT nam_nysid) AS nysids
@@ -28,10 +27,23 @@ nysids_per_person AS (
   GROUP BY nam_alias_link
 ),
 
+-- Get all addresses for a given alias set.
+-- Any PDCMS name can have multiple addresses, so we'll create an array of them.
+client_addresses AS (
+  SELECT DISTINCT
+    cas_aliasid,
+    COALESCE(cas_open_date::varchar, adr_date) AS adr_date, -- fall back on case open date in case of data entry problems
+    ARRAY[adr_type, adr_street1, adr_street2, adr_city, adr_state, adr_zipcode, adr_ph_number, adr_more_phones] as addresses
+  FROM survey_cases
+  JOIN addresses
+    ON cas_clientid = adr_nameid
+    AND cas_file_number = adr_file_number
+   group by cas_aliasid, cas_clientid
+),
+
 collapse_clients AS (
-  -- -- For a first pass, get the most recent first AND last name
-  -- -- as well as the first present language, race, gender, ethnicity, and citizenship.
-  -- -- In the next CLE we will collapse NYSIDs, but for now we will keep them as-is.
+  -- For a first pass, get the most recent first AND last name
+  -- as well as the first present language, race, gender, ethnicity, and citizenship.
   SELECT DISTINCT
     nam_nameid,
     potential_clients.nam_alias_link AS person_id,
@@ -42,11 +54,14 @@ collapse_clients AS (
     FIRST_VALUE(nam_gender) OVER (PARTITION BY potential_clients.nam_alias_link ORDER  BY nam_gender desc) AS gender,
     FIRST_VALUE(nam_ethnicity) OVER (PARTITION BY potential_clients.nam_alias_link ORDER  BY nam_ethnicity desc) AS ethnicity,
     FIRST_VALUE(nam_citizenship) OVER (PARTITION BY potential_clients.nam_alias_link ORDER  BY nam_citizenship desc) AS citizenship,
-    nysids
+    nysids,
+    adr_date,
+    addresses
   FROM potential_clients
-  JOIN nysids_per_person
+  LEFT JOIN nysids_per_person
     ON potential_clients.nam_alias_link = nysids_per_person.nam_alias_link
-  order by person_id
+  LEFT JOIN collapse_client_addresses
+    ON potential_clients.nam_alias_link = cas_aliasid
 ),
 
 -- Remove clients who speak a language other than English (blank) or Spanish
@@ -58,45 +73,9 @@ clients_english_spanish as (
     OR language = '' -- means English
     OR language is null -- means English
     )
-),
-
--- get address information
--- TODO: add CASE open date because if the address doesn't exist it won't have an address itself
--- TODO: COALESCE CASE open date AND address date so we have an approximate date for the blank address
-clients_addresses AS (
-  SELECT
-    clients_english_spanish.*,
-    adr_type,
-    adr_street1,
-    adr_street2,
-    adr_city,
-    adr_state,
-    adr_zipcode,
-    adr_ph_number,
-    adr_more_phones,
-    RANK() OVER (PARTITION BY person_id ORDER BY adr_date desc, adr_type, adr_file_number desc) AS addr_nb
-  FROM clients_english_spanish
-  JOIN addresses
-    ON adr_nameid = nam_nameid
-),
-
--- Remove people whose address most recent is blank
-clients_no_blank_addresses AS (
-  SELECT
-    *
-  FROM clients_addresses
-  WHERE NOT exists (
-    -- if the person_id's most recent address is blank, take out the person
-    -- we need there to be address information in at least one street fields
-    SELECT 1
-    FROM (SELECT * FROM clients_addresses WHERE addr_nb = 1) firsts
-    WHERE clients_addresses.person_id = firsts.person_id
-      AND (adr_street1 = '' 
-          OR adr_street2 = '')
-  )
 )
 
-select * from clients_no_blank_addresses
+select * from clients_english_spanish
 
 
 -- -- TODO: remove homeless? any address that doesn't start WITH a number?
