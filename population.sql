@@ -89,6 +89,20 @@ CREATE TABLE survey_cases AS
     )
   )
 
-  SELECT *
+  SELECT
+    cas_file_number,
+    cas_aliasid,
+    cas_open_date,
+    cas_closed_date,
+    cas_case_type,
+    cas_case_detail,
+    cas_tc_number,
+    cas_tc_short,
+    cas_fc_number,
+    cas_fc_short
+    snt_date,
+    snt_type,
+    snt_length,
+    snt_condition
   FROM clients_ever_730d
 ;  

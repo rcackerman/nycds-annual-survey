@@ -8,74 +8,80 @@
 -- Also flag the most recently used version of the person
 -- because names don't have an entered-on date
 WITH potential_clients AS (
-  SELECT
-    names.*,
-    RANK() OVER (PARTITION BY nam_alias_link ORDER BY cas_open_date::DATE, cas_file_number desc)
+  SELECT DISTINCT
+    survey_cases.*,
+    nam_nameid,
+    nam_last_name,
+    nam_first_name,
+    nam_dob,
+    nam_nysid,
+    CASE
+      WHEN (nam_interpreter IS NOT NULL AND nam_interpreter != '')
+        THEN nam_interpreter
+      ELSE 'ENGLISH'
+    END AS spoken_language,
+    nam_race,
+    nam_gender,
+    nam_ethnicity,
+    nam_citizenship
   FROM names
   JOIN survey_cases
   ON cas_aliasid = nam_alias_link
 ),
 
--- Collapse NYSIDs into an array so we can check on them in OCA.
--- Any given PDCMS name connected to an alias can have a different NYSID,
--- so we'll capture all of them for now.
-nysids_per_person AS (
-  SELECT
-    nam_alias_link,
-    array_agg(DISTINCT nam_nysid) AS nysids
+collapse_demo_details AS (
+  -- For a first pass, get any present language, race, gender, ethnicity, and citizenship.
+  SELECT DISTINCT
+    cas_aliasid,
+    array_agg(DISTINCT spoken_language) AS language,
+    array_agg(DISTINCT nam_race) filter (WHERE nam_race != '') AS race,
+    array_agg(DISTINCT nam_gender) filter (WHERE nam_gender != '') AS gender,
+    array_agg(DISTINCT nam_ethnicity) AS ethnicity,
+    MAX(
+      CASE
+        WHEN nam_citizenship = 'Y' THEN 0
+        WHEN nam_citizenship IS NULL THEN 0
+        WHEN (nam_citizenship = 'N' OR nam_citizenship = 'U') THEN 1
+      END) AS non_citizen,
+    nam_nysid AS nysid
   FROM potential_clients
-  GROUP BY nam_alias_link
 ),
+
+-- Remove clients who speak a language other than English or Spanish
+clients_english_spanish as (
+  SELECT
+    cas_aliasid,
+    unnest(language) AS language,
+    race,
+    gender,
+    ethnicity,
+    citizenship
+  FROM collapse_clients
+  -- check that either 'ENGLISH' OR 'SPANISH' IS in the language array
+  WHERE language && ARRAY['ENGLISH', 'SPANISH']::CHARACTER VARYING[] -- the character varying[] part tells the operator that it's comparing apples to apples
+  -- check that the person is only recorded as speaking one language, because otherwise we won't know what to send them
+  AND ARRAY_LENGTH(language, 1) = 1 
+)
 
 -- Get all addresses for a given alias set.
 -- Any PDCMS name can have multiple addresses, so we'll create an array of them.
 client_addresses AS (
   SELECT DISTINCT
     cas_aliasid,
-    COALESCE(cas_open_date::varchar, adr_date) AS adr_date, -- fall back on case open date in case of data entry problems
-    ARRAY[adr_type, adr_street1, adr_street2, adr_city, adr_state, adr_zipcode, adr_ph_number, adr_more_phones] as addresses
-  FROM survey_cases
-  JOIN addresses
-    ON cas_clientid = adr_nameid
-    AND cas_file_number = adr_file_number
-   group by cas_aliasid, cas_clientid
-),
-
-collapse_clients AS (
-  -- For a first pass, get the most recent first AND last name
-  -- as well as the first present language, race, gender, ethnicity, and citizenship.
-  SELECT DISTINCT
     nam_nameid,
-    potential_clients.nam_alias_link AS person_id,
-    FIRST_VALUE(nam_first_name) OVER (PARTITION BY potential_clients.nam_alias_link ORDER BY rank) AS first_name,
-    FIRST_VALUE(nam_last_name) OVER (PARTITION BY potential_clients.nam_alias_link ORDER BY rank) AS last_name,
-    FIRST_VALUE(nam_interpreter) OVER (PARTITION BY potential_clients.nam_alias_link ORDER BY nam_interpreter desc) AS language,
-    FIRST_VALUE(nam_race) OVER (PARTITION BY potential_clients.nam_alias_link ORDER  BY nam_race desc) AS race,
-    FIRST_VALUE(nam_gender) OVER (PARTITION BY potential_clients.nam_alias_link ORDER  BY nam_gender desc) AS gender,
-    FIRST_VALUE(nam_ethnicity) OVER (PARTITION BY potential_clients.nam_alias_link ORDER  BY nam_ethnicity desc) AS ethnicity,
-    FIRST_VALUE(nam_citizenship) OVER (PARTITION BY potential_clients.nam_alias_link ORDER  BY nam_citizenship desc) AS citizenship,
-    nysids,
-    adr_date,
-    addresses
-  FROM potential_clients
-  LEFT JOIN nysids_per_person
-    ON potential_clients.nam_alias_link = nysids_per_person.nam_alias_link
-  LEFT JOIN collapse_client_addresses
-    ON potential_clients.nam_alias_link = cas_aliasid
+    COALESCE(cas_open_date::varchar, adr_date) AS adr_date, -- fall back on case open date in case of data entry problems
+    adr_type,
+    adr_street1,
+    adr_street2,
+    adr_city,
+    adr_state,
+    adr_zipcode,
+    adr_ph_number,
+    adr_more_phones
+  FROM 
+  JOIN addresses
+    ON nam_nameid = adr_nameid
 ),
 
--- Remove clients who speak a language other than English (blank) or Spanish
-clients_english_spanish as (
-  SELECT
-    *
-  FROM collapse_clients
-  WHERE (language in ('ENGLISH', 'SPANISH')
-    OR language = '' -- means English
-    OR language is null -- means English
-    )
-)
 
-select * from clients_english_spanish
-
-
--- -- TODO: remove homeless? any address that doesn't start WITH a number?
+select * from clients_english_spanish;

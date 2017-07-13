@@ -31,17 +31,18 @@ The population dataset is created in 3 stages.
 
 In this file we do not collapse people; that is, if someone is on multiple cases, or has multiple dispositions of a case, they will appear in this dataset multiple times.
 
-#### collapse_clients.sql
+#### client_information.sql
 
-In this file, we collapse the various instances of one person into one single record, so that we can randomly sample clients who have had cases with us. Most of our clients do not have multiple aliases, but for those that do, we have to aggregate the information we know about them. For these clients we take any language they speak, and any race, ethnicity, gender, or citizenship we have recorded for any of their aliases and interpolate that to all of their aliases. We then pick the most recent name across any aliases the client might have. Finally, for any client with multiple ages, we take the most recent birth date.
+In this file, we collect all demographic information for clients, including information from any aliases that client might have.
 
-We look at all addresses for all clients - with or without aliases.
+This file also does not collapse clients, so a given client - and their aliases - may appear more than once.
 
-
-`collapse_clients.sql` uses `population.sql` and further refines it. Specifically, in `collapse_clients.sql`, we:
+`client_information.sql` uses `population.sql` and further refines it. Specifically, in `client_information.sql`, we:
 5. Remove clients who speak a language other than English (blank) or Spanish.
 6. Remove clients currently under 18.
 
+
+#### population.py
 
 Finally, we use python to remove clients who are homeless or have unstable housing. In `population.py` we:
 7. Remove clients whose last address is 'homeless' or an address that is a shelter, hospital, or rehab facility.
