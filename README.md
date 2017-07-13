@@ -31,7 +31,9 @@ The population dataset is created in 3 stages.
 
 In this file we do not collapse people; that is, if someone is on multiple cases, or has multiple dispositions of a case, they will appear in this dataset multiple times.
 
-#### client_information.sql
+This file is also used to get case information.
+
+#### client_demographics.sql
 
 In this file, we collect all demographic information for clients, including information from any aliases that client might have.
 
@@ -40,6 +42,10 @@ This file also does not collapse clients, so a given client - and their aliases 
 `client_information.sql` uses `population.sql` and further refines it. Specifically, in `client_information.sql`, we:
 5. Remove clients who speak a language other than English (blank) or Spanish.
 6. Remove clients currently under 18.
+
+#### client_addresses.sql
+
+This file collects address information for each set of client aliases.
 
 
 #### population.py
