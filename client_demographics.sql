@@ -1,4 +1,4 @@
-﻿-- collapse_clients.sql
+﻿-- client_demographics.sql
 -- PDCMS links people to deal with duplicates
 -- this query collapses those links into discrete groups
 
@@ -12,7 +12,6 @@ WITH potential_clients AS (
     cas_aliasid,
     cas_clientid,
     nam_dob::DATE AS nam_dob, 
-    nam_nysid,
     CASE
       WHEN (nam_interpreter IS NOT NULL AND nam_interpreter != '')
         THEN nam_interpreter

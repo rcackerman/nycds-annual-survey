@@ -5,9 +5,9 @@ This is the codebase for the annual survey.
 ### Population construction
 The population dataset is created in 3 stages.
 
-#### population.sql
+#### case_population.sql
 
-`population.sql` generates a dataset of clients on cases that qualify:
+`case_population.sql` generates a dataset of clients on cases that qualify:
 1. Get all clients who are on a closed case, which was disposed of in the last 3 years.
 2. Remove clients with current case.
 3. Remove clients with disposition of being transferred to another provider. Disposition codes are:
@@ -33,19 +33,20 @@ In this file we do not collapse people; that is, if someone is on multiple cases
 
 This file is also used to get case information.
 
-#### client_demographics.sql
+#### person_population.sql
 
-In this file, we collect all demographic information for clients, including information from any aliases that client might have.
+In this file, we find demographic information for each person. A person might be split between various "aliases", so we aggregate demographic information for a given person.
 
 This file also does not collapse clients, so a given client - and their aliases - may appear more than once.
 
-`client_information.sql` uses `population.sql` and further refines it. Specifically, in `client_information.sql`, we:
+`person_population.sql` uses `case_population.sql` and further refines it. Specifically, in `client_information.sql`, we:
+
 5. Remove clients who speak a language other than English (blank) or Spanish.
 6. Remove clients currently under 18.
 
-#### client_addresses.sql
+#### population.sql
 
-This file collects address information for each set of client aliases.
+`client_population.sql` takes the alias groupings in `person_population.sql` and adds the first and last name for each client instance in the grouping, as well as address information for each client.
 
 
 #### population.py
