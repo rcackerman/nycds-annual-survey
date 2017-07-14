@@ -46,7 +46,7 @@ This file also does not collapse clients, so a given client - and their aliases 
 
 #### population.sql
 
-`client_population.sql` takes the alias groupings in `person_population.sql` and adds the first and last name for each client instance in the grouping, as well as address information for each client.
+`population.sql` takes the alias groupings in `person_population.sql` and adds the first and last name for each client instance in the grouping, as well as address information for each client.
 
 
 #### population.py
