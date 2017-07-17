@@ -89,6 +89,11 @@ The final columns will be:
 * `nysids` - a list of all NYSIDs associated with the person's aliases
 * address information - TBD
 
+### Audit
+
+There are three auditing files (so far). `test_cases.csv` has cases that we do and don't want; it checks `case_population.sql`. Likewise, `test_people.csv` is to audit `people_population.csv` and `test_population.csv` is to audit `population.sql`.
+
+
 ### Potential to-dos/etc
 
 Potentially remove clients who are in mental health court and clients who had more than one assigned attorney.
