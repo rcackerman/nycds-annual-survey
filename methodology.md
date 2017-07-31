@@ -103,7 +103,7 @@ Responses will be processed in the following way:
 *	The preparer will check off the survey as completed on the list of surveys.
 *	Finally, the preparer will shred the paper copy of the survey.
 
-The only exception to this protocol will be if the client mentions an action by NYCDS staff that would result in sanctions or discipline, according to the NYCDS Policy Against Discrimination, NYCDS Conflict of Interest Policy, or relevant Bar Associate rules.
+The only exception to this protocol will be if the client mentions an action by NYCDS staff that would result in sanctions or discipline, according to the NYCDS Policy Against Discrimination, NYCDS Conflict of Interest Policy, NYCDS Personnel Manual, or relevant Bar Associate rules.
 
 ## Analysis
 
