@@ -96,12 +96,14 @@ The survey packet will include a cover letter, which will be basically the same 
 ### Processing responses
 
 Responses will be processed in the following way:
-*	The preparer will redact any names or identifying information about the client or attorney
+*	The preparer will redact any names or identifying information about the client or attorney.
 *	The preparer will scan the survey. Any additional documents (a page of notes, etc) should be scanned to a separate file.
 *	The preparer will save the scanned image save it to a folder on the U Drive. The image name should be the ID of the survey.
 *	The preparer will check the quality of the image, and make sure that it is machine-readable.
 *	The preparer will check off the survey as completed on the list of surveys.
-*	Finally, the preparer will shred the paper copy of the survey. 
+*	Finally, the preparer will shred the paper copy of the survey.
+
+The only exception to this protocol will be if the client mentions an action by NYCDS staff that would result in sanctions or discipline, according to the NYCDS Policy Against Discrimination, NYCDS Conflict of Interest Policy, or relevant Bar Associate rules.
 
 ## Analysis
 
