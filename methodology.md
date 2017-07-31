@@ -4,22 +4,22 @@ I’ve put together a write-up of what I’ll be doing for the survey and why. T
 
 ## Research Question
 
-###Hypotheses
+### Hypotheses
 
 Developing the hypotheses to test before we start tabulating results helps prevent spurious findings. When presented with data, people instinctively – and often subconsciously – organize those data into a narrative that fits their existing theories. Formulating beforehand the assumptions that we have forces us form questions without that temptation; additionally, it helps us avoid reading too much into any “noise” in our results. [Here](https://xkcd.com/882/) is why.
 
 I’ve come up with the following hypotheses:
 
-•	More contact with clients is correlated with a better relationship.
-•	More contact with clients is correlated with clients understanding what is happening in their case.
-•	More contact with clients is correlated with clients feeling like their attorney is fighting for them.
-•	Clients feeling like their attorney is fighting for them is correlated with a better relationship.
-•	Clients feeling listened to is correlated with a better relationship.
-•	Clients feeling listened to is more strongly correlated with clients feeling like their attorney fought for them than is the outcome of their case.
-•	Clients feeling listened to is more strongly correlated with clients feeling like their attorney fought for them than is the number of times a lawyer contacted them.
-•	Clients getting referred to ancillary services is correlated with clients saying they received ancillary services.
-•	Clients being contacted by employees of NYCDS other than their attorney is correlated with a better relationship.
-•	Clients suffer from major collateral consequences, even when they are not found guilty, plea to a violation, plea to a minor misdemeanor, or are found guilty of a minor misdemeanor.
+*	More contact with clients is correlated with a better relationship.
+*	More contact with clients is correlated with clients understanding what is happening in their case.
+*	More contact with clients is correlated with clients feeling like their attorney is fighting for them.
+*	Clients feeling like their attorney is fighting for them is correlated with a better relationship.
+*	Clients feeling listened to is correlated with a better relationship.
+*	Clients feeling listened to is more strongly correlated with clients feeling like their attorney fought for them than is the outcome of their case.
+*	Clients feeling listened to is more strongly correlated with clients feeling like their attorney fought for them than is the number of times a lawyer contacted them.
+*	Clients getting referred to ancillary services is correlated with clients saying they received ancillary services.
+*	Clients being contacted by employees of NYCDS other than their attorney is correlated with a better relationship.
+*	Clients suffer from major collateral consequences, even when they are not found guilty, plea to a violation, plea to a minor misdemeanor, or are found guilty of a minor misdemeanor.
 
 All this said, it is likely that we will not have enough of a response rate to be able to answer most of these questions. Please see the Response Rate section of this methodology for what we will do if we get a low response rate.
  
@@ -29,12 +29,12 @@ All this said, it is likely that we will not have enough of a response rate to b
 
 Our clients are a diverse group of people. Because of that, to get a representative sample we want to make sure that our sample is as diverse as our client population. These are intended variables: the aspects of clients’ demographics and cases that we want to make sure are represented in our sample. Potential intended variables include:
 
-•	Age
-•	Charge type
-•	Number of previous cases
-•	Incarceration status
-•	Outcome of case
-•	Use of services
+*	Age
+*	Charge type
+*	Number of previous cases
+*	Incarceration status
+*	Outcome of case
+*	Use of services
 
 ### Sampling Population
 
@@ -42,21 +42,21 @@ The final sample will be about 600 people. We will sample among clients who have
 
 We will not sample anyone:
 
-•	without an address
-•	under 18
-•	ever 7/30’d
-•	currently on open case
-•	who does not speak English, Spanish, or French (potentially)
-•	whose case had more than one assigned attorney (potentially)
+*	without an address
+*	under 18
+*	ever 7/30’d
+*	currently on open case
+*	who does not speak English, Spanish, or French (potentially)
+*	whose case had more than one assigned attorney (potentially)
 
 ### Sampling method
 
 I will perform a stratified random sample, which basically means that I will break the eligible population into groups (strata), and then will randomly sample from each group. Potential strata include:
 
-•	Trial
-•	Felony/misdemeanor
-•	Female
-•	Incarcerated – Rikers/upstate/non
+*	Trial
+*	Felony/misdemeanor
+*	Female
+* Incarcerated – Rikers/upstate/non
 
 ### Oversampling
 
@@ -72,16 +72,16 @@ The following section is mainly administrative detail, and mostly to think throu
 
 The final sample list will need to include:
 
-•	Client name
-•	Client contact information
-•	Attorney name
-•	Top charge
-•	Number of appearances
-•	Final disposition
-•	Incarceration status
-•	Gender
-•	Language
-•	Survey ID
+*	Client name
+*	Client contact information
+*	Attorney name
+*	Top charge
+*	Number of appearances
+*	Final disposition
+*	Incarceration status
+*	Gender
+*	Language
+*	Survey ID
 
 Client name and contact information will be used only for administering the survey and generating letters, envelopes and/or surveys. Attorney name will be used only for generating the letter. 
 
@@ -96,12 +96,12 @@ The survey packet will include a cover letter, which will be basically the same 
 ### Processing responses
 
 Responses will be processed in the following way:
-•	The preparer will redact any names or identifying information about the client or attorney
-•	The preparer will scan the survey. Any additional documents (a page of notes, etc) should be scanned to a separate file.
-•	The preparer will save the scanned image save it to a folder on the U Drive. The image name should be the ID of the survey.
-•	The preparer will check the quality of the image, and make sure that it is machine-readable.
-•	The preparer will check off the survey as completed on the list of surveys.
-•	Finally, the preparer will shred the paper copy of the survey. 
+*	The preparer will redact any names or identifying information about the client or attorney
+*	The preparer will scan the survey. Any additional documents (a page of notes, etc) should be scanned to a separate file.
+*	The preparer will save the scanned image save it to a folder on the U Drive. The image name should be the ID of the survey.
+*	The preparer will check the quality of the image, and make sure that it is machine-readable.
+*	The preparer will check off the survey as completed on the list of surveys.
+*	Finally, the preparer will shred the paper copy of the survey. 
 
 ## Analysis
 
