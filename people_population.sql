@@ -5,8 +5,6 @@
 -- For right now, work with clients only
 -- Look up clients by alias, because the alias ID is the "master" ID
 -- so provides a link across versions of the same person.
--- Also flag the most recently used version of the person
--- because names don't have an entered-on date
 WITH potential_clients AS (
   SELECT DISTINCT
     cas_aliasid,
