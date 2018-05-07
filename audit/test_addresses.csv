@@ -1,6 +1,6 @@
 "adr_nameid","adr_file_number","adr_type","adr_date","adr_street1","adr_street2","adr_city","adr_state","adr_zipcode","adr_ph_number","eligible"
 "3","4","P","5/31/2017","1700 Test Ave., Apt. 3C","","Bronx","NY","","","no - ineligible person"
-"11","11","P","5/31/2017","Homeless","","NY","","","yes"
+"11","11","P","5/31/2017","Homeless","","","NY","","","yes"
 "11","125","P","5/31/2007","540 W 50TH ST, 3","","NEW YORK","NY","10009","","yes - old case of eligible person"
 "12","12","P","5/31/2017","540 W 50TH ST, 3","","NEW YORK","NY","10009","","yes"
 "20","150","P","1/1/2005","1243 TEST","","NY","NY","10009","1111111111","yes - alias of eligible person"
