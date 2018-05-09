@@ -18,7 +18,18 @@ client_names AS (
 FROM survey_people
 JOIN names
   ON survey_people.person_id = names.nam_alias_link
-    
+),
+
+-- Get case information
+client_cases AS (
+  SELECT
+    person_id,
+    nam_nameid,
+    first_name,
+    last_name,
+    nysid,
+    dob,
+    language
 )
 
 -- Get all addresses for a given alias set.
