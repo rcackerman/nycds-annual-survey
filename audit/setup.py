@@ -35,9 +35,5 @@ def teardown(conn):
     conn.execute(DropSchema('audit', cascade=True))
 
 
-with ENGINE.connect() as conn:
-    setup(conn)
 
 
-with ENGINE.connect() as conn:
-    teardown(conn)
