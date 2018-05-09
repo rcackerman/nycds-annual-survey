@@ -16,10 +16,12 @@ CREATE TABLE survey_cases AS
       cas_tc_number,
       cas_tc_short,
       cas_fc_number,
-      cas_fc_short
+      cas_fc_short,
+      cas_docket,
+      cas_indictment
     FROM cases
     WHERE cas_case_status = 'C'
-    AND cas_closed_date::DATE > current_date - '3 years'::INTERVAL
+    AND cas_closed_date::DATE > current_date - '6 months'::INTERVAL
     AND cas_closed_date::DATE <= current_date
   ),
 
@@ -49,22 +51,6 @@ CREATE TABLE survey_cases AS
                          'C/I', 'EXH', 'INEL', 'PROS', 'R18B', 'RELC',
                          'RHOM', 'RLAS', 'RNDS', 'RPC')
     )
-  ),
-
-  -- Get sentence info so we can tell who will be in or out
-  cases_with_sentencing AS (
-    SELECT
-      cases_not_transferred.*,
-      snt_date,
-      snt_type,
-      snt_length,
-      snt_condition
-    FROM cases_not_transferred
-    LEFT JOIN sentences
-      ON cas_file_number = snt_file_number
-      AND (snt_date != ''
-        OR snt_length != ''
-        OR snt_condition != '')
   ),
 
   -- Remove clients who were ever 730'd

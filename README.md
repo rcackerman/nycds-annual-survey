@@ -8,7 +8,7 @@ The population dataset is created in 3 stages.
 #### case_population.sql
 
 `case_population.sql` generates a dataset of clients on cases that qualify:
-1. Get all clients who are on a closed case, which was disposed of in the last 3 years.
+1. Get all clients who are on a closed case, which was disposed of in the last 6 months\*.
 2. Remove clients with current case.
 3. Remove clients with disposition of being transferred to another provider. Disposition codes are:
   * 'ADBR' - adjourned to Brooklyn
@@ -104,3 +104,7 @@ Due to how messy the address data are, we will need to do more processing (maybe
 Steps for sample:
 7. ~~Create dummy variable for whether they were in jail during pendency of their case.~~
 6. ~~Remove clients whose last address is blank (since we can't mail them anything).~~
+
+
+
+\* Bronx Defenders found people become more and more unreachable after their case closes. When they tested, they found that at 6 months about half of phone numbers were not working.
