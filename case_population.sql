@@ -1,4 +1,4 @@
-﻿-- population.sql
+-- population.sql
 
 DROP TABLE IF EXISTS survey_cases;
 
@@ -57,21 +57,22 @@ CREATE TABLE survey_cases AS
   clients_ever_730d AS (
     SELECT
       *
-    FROM cases_with_sentencing
+    FROM cases_not_transferred 
     WHERE NOT EXISTS (
       SELECT 1
       FROM (
         -- this finds all clients who ever had a case
         -- with a mental illness disposition
         SELECT DISTINCT
-          cas_aliasid -- use the alias ID to get the linked people
+          -- use the alias ID to get the linked people
+          cas_aliasid
         FROM cases
         JOIN dispositions
           ON cas_file_number = dsp_file_number
         WHERE dsp_action = '730'  
           OR dsp_action = 'NGMD'
       ) ever_mi
-      WHERE cases_with_sentencing.cas_aliasid = ever_mi.cas_aliasid
+      WHERE cases_not_transferred.cas_aliasid = ever_mi.cas_aliasid
     )
   )
 
@@ -86,9 +87,5 @@ CREATE TABLE survey_cases AS
     cas_tc_short,
     cas_fc_number,
     cas_fc_short
-    snt_date,
-    snt_type,
-    snt_length,
-    snt_condition
   FROM clients_ever_730d
 ;  
