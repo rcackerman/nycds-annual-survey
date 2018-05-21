@@ -1,4 +1,4 @@
-﻿-- client_demographics.sql
+-- client_demographics.sql
 -- PDCMS links people to deal with duplicates
 -- this query collapses those links into discrete groups
 
@@ -59,19 +59,19 @@ CREATE TABLE survey_people AS
       non_citizen
     FROM collapse_demo_details
     -- check that either 'ENGLISH' OR 'SPANISH' IS in the language array
-    WHERE language && ARRAY['ENGLISH', 'SPANISH']::CHARACTER VARYING[] -- the character varying[] part tells the operator that it's comparing apples to apples
+    WHERE language && ARRAY['ENGLISH', 'SPANISH']::TEXT[] -- the character varying[] part tells the operator that it's comparing apples to apples
     AND ARRAY_LENGTH(language, 1) = 1 
     AND AGE(current_date, dob) > '18 years'::INTERVAL
   )
 
   SELECT
-    potential_clients.cas_aliasid AS person_id,
+    potential_clients.cas_aliasid,
     clients_filtered.dob,
     clients_filtered.language,
     clients_filtered.race,
     clients_filtered.gender,
     clients_filtered.ethnicity,
-    clients_filtered.citizenship
+    clients_filtered.non_citizen
   FROM potential_clients
   JOIN clients_filtered
     ON potential_clients.cas_aliasid = clients_filtered.cas_aliasid
