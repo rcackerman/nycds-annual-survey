@@ -29,14 +29,22 @@ for s in sql_statements:
 
 cases = conn.execute(
             'select cas_file_number, cas_aliasid from survey_cases').fetchall()
-results = conn.execute(text(
-                        "select eligible_case, eligible_pers, cas_file_number "
-                        "from cases where cas_file_number in :numbers"),
-                       numbers = tuple([i[0] for i in ids])
-                       ).fetchall()
+print(conn.execute(text(
+                    "select eligible_case, eligible_pers, cas_file_number "
+                    "from cases where cas_file_number in :numbers"),
+                   numbers = tuple([i[0] for i in cases])
+                   ).fetchall())
+print(conn.execute(text(
+                    "select eligible_case, eligible_pers, cas_file_number "
+                    "from cases where eligible_case ilike 'yes%' "
+                    "and cas_file_number not in :numbers"),
+                   numbers = tuple([i[0] for i in cases])
+                   ).fetchall())
 
 
+
+conn.close()
 
 # teardown
-teardown(conn)
-conn.close()
+with ENGINE.connect() as conn:
+    teardown(conn)
