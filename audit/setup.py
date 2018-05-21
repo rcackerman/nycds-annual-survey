@@ -33,7 +33,3 @@ def teardown(conn):
     """Teardown testing database.
     """
     conn.execute(DropSchema('audit', cascade=True))
-
-
-
-
