@@ -14,10 +14,16 @@ from setup import *
 with ENGINE.connect() as conn:
     setup(conn)
 
-pdcms_tables = MetaData(bind=ENGINE, schema='audit')
+# Get info about the newly created tables automagically
+meta = MetaData(bind=ENGINE, schema='audit')
+meta.reflect()
+test_data_tables = meta.tables 
 
-# run
+
+# Test interstitial tables
 conn = ENGINE.connect()
+test_case_pop_sql()
+test_people_pop_sql()
 conn.close()
 
 def test_case_pop_sql():
