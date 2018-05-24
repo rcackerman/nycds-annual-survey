@@ -4,7 +4,6 @@ import glob
 import pandas
 import numpy
 from sqlalchemy import create_engine, Table, MetaData
-from sqlalchemy.sql import select, text
 from sqlalchemy.schema import CreateSchema, DropSchema
 from setup import *
 
@@ -34,7 +33,7 @@ def test_case_pop_sql():
     # define the survey table in SQL alchemy
     survey_cases = Table('survey_cases', meta, autoload=True, autoload_with=ENGINE,
                   schema='audit')
-    print(get_result_comparison(conn, cases, survey_cases))
+    print(test_intermediate_pop_tables(conn, test_data_tables['audit.cases'], survey_cases))
 
 
 def test_people_pop_sql():
@@ -45,6 +44,7 @@ def test_people_pop_sql():
     # define the survey table in SQL alchemy
     survey_people = Table('survey_people', meta, autoload=True, autoload_with=ENGINE,
                           schema='audit')
+    print(test_intermediate_pop_tables(conn, test_data_tables['audit.names'], survey_people))
 
 
 # teardown
