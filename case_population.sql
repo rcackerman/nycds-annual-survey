@@ -51,8 +51,7 @@ CREATE TABLE survey_cases AS
     SELECT
       *
     FROM closed_cases
-    WHERE dsp_ACD = 'f'
-    AND dsp_transfer = 'f'
+    WHERE dsp_transfer = 'f'
     AND NOT EXISTS (
       SELECT 1
       FROM cases
