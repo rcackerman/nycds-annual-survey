@@ -60,7 +60,6 @@ CREATE TABLE survey_people AS
     FROM collapse_demo_details
     -- check that either 'ENGLISH' OR 'SPANISH' IS in the language array
     WHERE language && ARRAY['ENGLISH', 'SPANISH']::TEXT[] -- the character varying[] part tells the operator that it's comparing apples to apples
-    AND ARRAY_LENGTH(language, 1) = 1 
     AND AGE(current_date, dob) > '18 years'::INTERVAL
   )
 
