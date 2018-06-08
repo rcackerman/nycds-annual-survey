@@ -50,7 +50,7 @@ CREATE TABLE survey_people AS
   -- Remove clients who speak a language other than English or Spanish
   clients_filtered as (
     SELECT
-      cas_aliasid,
+      cas_aliasid AS person_id,
       dob,
       unnest(language) AS language,
       race,
@@ -64,7 +64,7 @@ CREATE TABLE survey_people AS
   )
 
   SELECT
-    potential_clients.cas_aliasid,
+    clients_filtered.person_id,
     clients_filtered.dob,
     clients_filtered.language,
     clients_filtered.race,
