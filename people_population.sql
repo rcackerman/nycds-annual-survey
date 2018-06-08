@@ -52,7 +52,7 @@ CREATE TABLE survey_people AS
     SELECT
       cas_aliasid AS person_id,
       dob,
-      unnest(language) AS language,
+      language,
       race,
       gender,
       ethnicity,
@@ -63,7 +63,7 @@ CREATE TABLE survey_people AS
     AND AGE(current_date, dob) > '18 years'::INTERVAL
   )
 
-  SELECT
+  SELECT DISTINCT
     clients_filtered.person_id,
     clients_filtered.dob,
     clients_filtered.language,
@@ -73,5 +73,5 @@ CREATE TABLE survey_people AS
     clients_filtered.non_citizen
   FROM potential_clients
   JOIN clients_filtered
-    ON potential_clients.cas_aliasid = clients_filtered.cas_aliasid
+    ON potential_clients.cas_aliasid = clients_filtered.person_id
   ;
