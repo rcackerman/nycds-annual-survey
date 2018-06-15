@@ -27,13 +27,23 @@ survey_frame_df.loc[(survey_frame_df['cas_indictment'].str.contains('NY', na=Fal
 # Join with other data sources for info we want to stratify on
 trials = pd.read_csv('') #clients who went to trial
 bail_info = pd.read_csv() #clients' bail status
+social_work_referrals = pd.read_csv()
+investigation_referral = pd.read_csv()
 
 ###
 # Some things to potentially stratify on
+survey_frame_df['non-citizen'] = None
+survey_frame_df['trial'] = None
+survey_frame_df['gender'] = None
+survey_frame_df['sentenced_to_jail'] = None
+survey_frame_df['single_day_case'] = None # or just get rid of that
+survey_frame_df['first_arrest'] = None
 
-# Stop and Frisk-type arrests: marijuana, jumping turnstiles, etc
-survey_frame_df['stop_frisk']
+###
+# Things that are important to know
+survey_frame_df['social_work_referral'] = None
+survey_frame_df['investigation_referral'] = None
+survey_frame_df['age_group'] = None
 survey_frame_df['indicted'] = survey_frame_df['cas_indictment'].apply(
                                 lambda x: True if pd.notnull(x) else False)
-survey_frame_df['non-citizen']
-
+survey_frame_df['currently_incarcerated'] = None
