@@ -61,6 +61,6 @@ CREATE TABLE survey_people AS
       non_citizen
     FROM collapse_demo_details
     -- check that either 'ENGLISH' OR 'SPANISH' IS in the language array
-    WHERE ('ENGLISH' in language OR 'SPANISH' in language)
+    WHERE ('ENGLISH' = any(language) OR 'SPANISH' = any(language))
     AND AGE(current_date, dob) > '18 years'::INTERVAL
 ;
