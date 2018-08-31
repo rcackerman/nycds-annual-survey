@@ -1,4 +1,4 @@
--- client_demographics.sql
+-- people_population.sql
 -- PDCMS links people to deal with duplicates
 -- this query collapses those links into discrete groups
 
@@ -10,8 +10,10 @@ DROP TABLE IF EXISTS survey_people;
 CREATE TABLE survey_people AS
 
   WITH potential_clients AS (
+    -- a slightly cleaned version of people who are clients on
+    -- eligible cases
     SELECT DISTINCT
-      cas_aliasid,
+      cas_aliasid AS person_id,
       cas_clientid,
       nam_dob::DATE AS nam_dob, 
       CASE
@@ -28,10 +30,11 @@ CREATE TABLE survey_people AS
     ON cas_aliasid = nam_alias_link
   ),
 
-  -- For a first pass, get any present language, race, gender, ethnicity, and citizenship.
   collapse_demo_details AS (
+    -- For a first pass, get any present language, race,
+    -- gender, ethnicity, and citizenship.
     SELECT DISTINCT
-      cas_aliasid,
+      person_id,
       MAX(nam_dob) AS dob, -- get the most recent birthdate, if the alias group has more than 1
       array_agg(DISTINCT spoken_language) AS language,
       array_agg(DISTINCT nam_race) filter (WHERE nam_race != '') AS race,
@@ -44,13 +47,12 @@ CREATE TABLE survey_people AS
           WHEN (nam_citizenship = 'N' OR nam_citizenship = 'U') THEN 1
         END) AS non_citizen
     FROM potential_clients
-    GROUP BY cas_aliasid
-  ),
+    GROUP BY person_id
+  )
 
   -- Remove clients who speak a language other than English or Spanish
-  clients_filtered as (
     SELECT
-      cas_aliasid AS person_id,
+      person_id,
       dob,
       language,
       race,
@@ -59,19 +61,6 @@ CREATE TABLE survey_people AS
       non_citizen
     FROM collapse_demo_details
     -- check that either 'ENGLISH' OR 'SPANISH' IS in the language array
-    WHERE language && ARRAY['ENGLISH', 'SPANISH']::TEXT[] -- the character varying[] part tells the operator that it's comparing apples to apples
+    WHERE ('ENGLISH' in language OR 'SPANISH' in language)
     AND AGE(current_date, dob) > '18 years'::INTERVAL
-  )
-
-  SELECT DISTINCT
-    clients_filtered.person_id,
-    clients_filtered.dob,
-    clients_filtered.language,
-    clients_filtered.race,
-    clients_filtered.gender,
-    clients_filtered.ethnicity,
-    clients_filtered.non_citizen
-  FROM potential_clients
-  JOIN clients_filtered
-    ON potential_clients.cas_aliasid = clients_filtered.person_id
-  ;
+;
