@@ -53,12 +53,29 @@ CREATE TABLE survey_cases AS
                             'RHOM', 'RLAS', 'RNDS', 'RPC')
       )
   ),
+  
+  cases_single_attorney AS (
+    SELECT
+      *
+    FROM cases_not_transferred
+    WHERE exists (
+      SELECT 1
+      FROM (
+        SELECT evt_file_number
+        FROM events
+        WHERE evt_purpose in ('NCD', 'ARR', 'TRIL', 'OPEN', 'RW', 'DISP')
+        GROUP BY evt_file_number
+        HAVING count(DISTINCT evt_attorney) = 1
+      ) single_attys
+      WHERE cases_not_transferred.cas_file_number = single_attys.evt_file_number
+    )   
+  ),
 
   cases_with_clients_never_730d AS (
   -- Remove cases with clients who were ever 730'd or found not guilty by reason of insanity
     SELECT
       *
-    FROM cases_not_transferred
+    FROM cases_single_attorney
     WHERE NOT EXISTS (
       SELECT 1
       FROM (
@@ -73,7 +90,7 @@ CREATE TABLE survey_cases AS
         WHERE dsp_action = '730'  
           OR dsp_action = 'NGMD'
       ) ever_mi
-      WHERE cases_not_transferred.cas_aliasid = ever_mi.cas_aliasid
+      WHERE cases_single_attorney.cas_aliasid = ever_mi.cas_aliasid
     )
   )
 
@@ -101,7 +118,7 @@ CREATE TABLE survey_cases AS
         WHEN dsp_action in ('ACD', 'MACD', 'FACD') THEN 1
         ELSE 0 END) AS only_acd,
       MIN(CASE
-        WHEN dsp_action like 'DIS%' THEN 1
+        WHEN dsp_action like 'DIS%%' THEN 1
         ELSE 0 END) AS case_dismissed
     FROM dispositions
     WHERE dsp_action != '' AND dsp_action IS NOT NULL
