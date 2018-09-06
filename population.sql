@@ -12,6 +12,22 @@ WITH fullnames AS (
     FROM names
   ) nams
   group BY nam_alias_link
+),
+
+sw_assigned AS (
+  SELECT
+    res_file_number,
+    res_date
+  FROM results
+  WHERE res_code = 'SW ASSIGNED'
+),
+
+investigator_assigned AS (
+  SELECT
+    evt_file_number,
+    evt_event_date
+  FROM events
+  WHERE evt_purpose = 'INVR'
 )
 
 SELECT
