@@ -8,6 +8,7 @@ CREATE TABLE survey_cases AS
   WITH closed_cases AS (
     SELECT
       cas_file_number,
+      cas_atty,
       cas_clientid,
       cas_aliasid,
       cas_open_date::DATE AS cas_open_date,
@@ -16,8 +17,10 @@ CREATE TABLE survey_cases AS
       cas_case_detail,
       cas_tc_number,
       cas_tc_short,
+      trim(cas_tc_type) AS tc_type,
       cas_fc_number,
       cas_fc_short,
+      trim(cas_fc_type) AS fc_type,
       cas_docket,
       cas_indictment
     FROM cases
@@ -96,18 +99,20 @@ CREATE TABLE survey_cases AS
 
   SELECT distinct
     cas_file_number,
+    cas_atty AS assigned_attorney,
     cas_clientid,
     cas_aliasid,
-    cas_open_date,
-    cas_closed_date,
-    cas_case_type,
-    cas_case_detail,
-    cas_tc_number,
-    cas_tc_short,
-    cas_fc_number,
-    cas_fc_short,
-    cas_docket,
-    cas_indictment,
+    cas_open_date AS case_open_date,
+    cas_closed_date AS case_close_date,
+    cas_case_detail AS case_type,
+    cas_tc_number AS top_charge,
+    cas_tc_short AS top_charge_desc,
+    tc_type AS top_charge_type,
+    cas_fc_number AS final_charge,
+    cas_fc_short AS final_charge_desc,
+    fc_type AS final_charge_type,
+    cas_docket AS docket_number,
+    cas_indictment AS indictment_number,
     only_acd,
     case_dismissed
   FROM cases_with_clients_never_730d
